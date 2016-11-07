@@ -1,0 +1,60 @@
+ 
+-- Standalone --
+
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+rm -Rf output
+mkdir input
+
+cp etc/hadoop/*.xml input
+/opt/hadoop/bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep input output 'dfs[a-z.]+'
+
+cat output/*
+
+1       dfsadmin
+
+-- WordCount --
+
+- HDFS
+cd /root
+mkdir -p wordcount/input
+
+vi wordcount/input/file01
+Hello World Bye World
+
+vi wordcount/input/file02
+Hello Hadoop Goodbye Hadoop
+
+/opt/hadoop/bin/hadoop fs -ls /root/wordcount/input/ /root/wordcount/input/file01 /root/wordcount/input/file02
+
+/opt/hadoop/bin/hadoop fs -cat /root/wordcount/input/file01
+/opt/hadoop/bin/hadoop fs -cat /root/wordcount/input/file02
+
+- Hand compile
+export JAVA_HOME=/usr/java/default
+export PATH=${JAVA_HOME}/bin:${PATH}
+export HADOOP_CLASSPATH=${JAVA_HOME}/lib/tools.jar
+
+/opt/hadoop/bin/hadoop com.sun.tools.javac.Main WordCount.java
+jar cf wc.jar WordCount*.class
+
+- Maven
+mvn clean install
+
+-- Launch
+/opt/hadoop/bin/hadoop fs -rm -r -f /root/wordcount/output
+
+- Hand
+/opt/hadoop/bin/hadoop jar wc.jar WordCount /root/wordcount/input /root/wordcount/output
+
+- Maven
+/opt/hadoop/bin/hadoop jar target/hadoop.jar com.cgi.hadoop.WordCount /root/wordcount/input /root/wordcount/output
+
+
+/opt/hadoop/bin/hadoop fs -cat /root/wordcount/output/part-r-00000
+Bye     1
+Goodbye 1
+Hadoop  2
+Hello   2
+World   2
+
