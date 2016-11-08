@@ -1,0 +1,44 @@
+
+-- Pseudo-Distributed
+
+etc/hadoop/core-site.xml
+
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://localhost:9000</value>
+    </property>
+</configuration>
+
+etc/hadoop/hdfs-site.xml
+
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+</configuration>
+
+ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+chmod 0600 ~/.ssh/authorized_keys
+
+bin/hdfs namenode -format
+
+- Start / Stop Hadoop
+sbin/start-dfs.sh
+sbin/stop-dfs.sh
+
+- copy files in hdfs
+/opt/hadoop/bin/hadoop fs -put /root/wordcount/input/file01 /root/wordcount/input
+/opt/hadoop/bin/hadoop fs -put /root/wordcount/input/file02 /root/wordcount/input
+
+
+http://192.168.56.20:50070/dfshealth.html#tab-overview
+
+- Run map reduce job
+/opt/hadoop/bin/hadoop fs -rm -r /user/root/output
+/opt/hadoop/bin/hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep input output 'dfs[a-z.]+'
+
+- look result
+bin/hdfs dfs -cat output/*

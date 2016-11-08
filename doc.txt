@@ -1,17 +1,3 @@
- 
--- Standalone --
-
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-
-rm -Rf output
-mkdir input
-
-cp etc/hadoop/*.xml input
-/opt/hadoop/bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep input output 'dfs[a-z.]+'
-
-cat output/*
-
-1       dfsadmin
 
 -- WordCount --
 
@@ -51,7 +37,7 @@ mvn clean install
 /opt/hadoop/bin/hadoop jar target/hadoop.jar com.cgi.hadoop.WordCount /root/wordcount/input /root/wordcount/output
 
 
-/opt/hadoop/bin/hadoop fs -cat /root/wordcount/output/part-r-00000
+/opt/hadoop/bin/hadoop fs -cat /root/wordcount/output/*
 Bye     1
 Goodbye 1
 Hadoop  2
